@@ -38,11 +38,8 @@ Object.keys(db).forEach(modelName => {
   }
 });
 
-// Export các đối tượng sequelize và Sequelize
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-// Export các đối tượng mô hình
-db.User = require('./rest/user')(sequelize, Sequelize.DataTypes);
 
 module.exports = db;
