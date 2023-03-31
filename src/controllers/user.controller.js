@@ -96,15 +96,15 @@ exports.updateUser = async (req, res) => {
         const { firstname, lastname, user_name, password, avatar, email, gender, phone, date_of_birth, address, status, roleId } = req.body;
         const idUser = await User.findOne({ where: { id: id } });
 
-        if (req.body.email) {
-            const existingEmail = await User.findOne({ where: { email: req.body.email } });
+        if (email) {
+            const existingEmail = await User.findOne({ where: { email } });
             if (existingEmail && idUser.id !== existingEmail.id) {
                 throw new Error('Email already exists');
             };
         };
 
-        if (req.body.user_name) {
-            const existingUserName = await User.findOne({ where: { user_name: req.body.user_name } });
+        if (user_name) {
+            const existingUserName = await User.findOne({ where: { user_name } });
             if (existingUserName && idUser.id !== existingUserName.id) {
                 throw new Error('User name already exists');
             };
@@ -143,18 +143,18 @@ exports.deleteUser = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const user = await Role.findOne({ where: { id } });
+        const user = await User.findOne({ where: { id } });
         if (!user) {
             return res.status(404).json({
                 status: 404,
-                message: 'Role not found!'
+                message: 'User not found!'
             });
         }
         await user.destroy();
 
         return res.json({
             status: 200,
-            message: 'Role deleted successfully!'
+            message: 'User deleted successfully!'
         });
     } catch (error) {
         console.log(error)
