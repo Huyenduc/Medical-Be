@@ -1,26 +1,70 @@
 'use strict';
+
 const { Sequelize, DataTypes } = require('sequelize');
 
 module.exports = (sequelize) => {
   const User = sequelize.define('user', {
     id: {
       allowNull: false,
-      autoIncrement: true,
+      defaultValue: Sequelize.UUIDV4,
       primaryKey: true,
-      type: Sequelize.INTEGER
+      type: Sequelize.UUID,
     },
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false
+    firstname: {
+      allowNull: true,
+      type: Sequelize.STRING
     },
-    email: {
-      type: DataTypes.STRING,
+    lastname: {
+      allowNull: true,
+      type: Sequelize.STRING
+    },
+    user_name: {
       allowNull: false,
-      unique: true
+      unique: true,
+      type: Sequelize.STRING
     },
     password: {
-      type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      type: Sequelize.STRING,
+    },
+    avatar: {
+      allowNull: true,
+      type: Sequelize.BLOB
+    },
+    email: {
+      allowNull: false,
+      type: Sequelize.STRING,
+      unique: true
+    },
+    gender: {
+      allowNull: true,
+      type: Sequelize.STRING
+    },
+    phone: {
+      allowNull: true,
+      type: Sequelize.STRING
+    },
+    date_of_birth: {
+      allowNull: true,
+      type: Sequelize.DATE
+    },
+    address: {
+      allowNull: true,
+      type: Sequelize.STRING
+    },
+    status: {
+      allowNull: true,
+      type: Sequelize.BOOLEAN
+    },
+    roleId: {
+      allowNull: false,
+      type: Sequelize.UUID,
+      references: {
+        model: 'roles',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     createdAt: {
       allowNull: false,
@@ -33,6 +77,10 @@ module.exports = (sequelize) => {
   }, {
 
   });
+
+  User.associate = function(models) {
+    User.belongsTo(models.role, { foreignKey: 'roleId' });
+  };
 
   return User;
 };

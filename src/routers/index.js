@@ -1,5 +1,7 @@
-import user from './user'
+import user from './user';
+import role from './role';
 
 export default {
-    user
+    user,
+    role
 }

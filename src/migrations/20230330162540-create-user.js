@@ -29,7 +29,7 @@ module.exports = {
       },
       avatar: {
         allowNull: true,
-        type: Sequelize.BLOB
+        type: Sequelize.BLOB,
       },
       email: {
         allowNull: false,
