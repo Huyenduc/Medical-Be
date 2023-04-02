@@ -16,7 +16,8 @@ module.exports = (sequelize) => {
         },
         license_number: {
             allowNull: false,
-            type: Sequelize.INTEGER
+            unique: true,
+            type: Sequelize.STRING
         },
         about: {
             type: Sequelize.STRING
@@ -30,6 +31,7 @@ module.exports = (sequelize) => {
         },
         user_id: {
             allowNull: false,
+            unique: true,
             type: Sequelize.UUID,
             references: {
                 model: 'users',
@@ -70,12 +72,8 @@ module.exports = (sequelize) => {
     });
 
     Doctor.associate = function (models) {
-        Doctor.belongsTo(models.user, { foreignKey: 'user_id' });
-    };
-    Doctor.associate = function (models) {
+        Doctor.belongsTo(models.user, { foreignKey: 'user_id', onDelete: 'CASCADE' });
         Doctor.belongsTo(models.workplace, { foreignKey: 'id_workplace' });
-    };
-    Doctor.associate = function (models) {
         Doctor.belongsTo(models.degree, { foreignKey: 'id_degree' });
     };
 

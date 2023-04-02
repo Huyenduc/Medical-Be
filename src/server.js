@@ -25,6 +25,7 @@ app.use('/api/role', routes.role);
 app.use('/api/auth', routes.auth);
 app.use('/api/degree', checkToken, routes.degree);
 app.use('/api/workplace', checkToken, routes.workplace);
+app.use('/api/doctor',checkToken,routes.doctor)
 
 // app.use((req, res) => {
 //   res.status(404).send('404: Page not found');

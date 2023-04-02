@@ -22,6 +22,7 @@ const userSchema = Joi.object({
 exports.getAllUsers = async (req, res) => {
     try {
         const users = await User.findAll({
+            attributes: { exclude: ['password'] },
             include: {
                 model: Role,
                 attributes: ['id', 'role_name']
@@ -80,6 +81,13 @@ exports.getUserById = async (req, res) => {
 
 exports.createUser = async (req, res) => {
     try {
+        const { error, value } = userSchema.validate(req.body);
+        if (error) {
+            return res.status(400).json({
+                status: 400,
+                message: error.details[0].message
+            });
+        };
         const existingUser = await User.findOne({ where: { email: req.body.email } });
         const existingUserName = await User.findOne({ where: { user_name: req.body.user_name } });
         if (existingUser) {
@@ -89,13 +97,7 @@ exports.createUser = async (req, res) => {
         if (existingUserName) {
             throw new Error('User_Name already exists');
         };
-        const { error, value } = userSchema.validate(req.body);
-        if (error) {
-            return res.status(400).json({
-                status: 400,
-                message: error.details[0].message
-            });
-        };
+
         const salt = await bcrypt.genSalt(5);
         value.password = await bcrypt.hash(value.password, salt);
         const user = await User.create(value);
@@ -136,8 +138,7 @@ exports.updateUser = async (req, res) => {
                 throw new Error('User name already exists');
             };
         };
-
-        const numberOfAffectedRows= await User.update(
+        const numberOfAffectedRows = await User.update(
             { firstname, lastname, user_name, password, avatar, email, gender, phone, date_of_birth, address, status, roleId },
             {
                 where: { id },

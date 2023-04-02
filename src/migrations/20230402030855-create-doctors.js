@@ -15,8 +15,9 @@ module.exports = {
         type: Sequelize.STRING,
       },
       license_number: {
+        unique: true,
         allowNull: false,
-        type: Sequelize.INTEGER            
+        type: Sequelize.STRING            
       },
       about: {
         type: Sequelize.STRING
@@ -30,6 +31,7 @@ module.exports = {
       },
       user_id: {
         allowNull: false,
+        unique: true,
         type: Sequelize.UUID,
         references: {
           model: 'users',
