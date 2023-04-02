@@ -124,6 +124,15 @@ exports.updateUser = async (req, res) => {
 
         const { firstname, lastname, user_name, password, avatar, email, gender, phone, date_of_birth, address, status, roleId } = req.body;
         const idUser = await User.findOne({ where: { id: id } });
+        if (!idUser) {
+            return res.status(404).json({
+                status: 404,
+                message: 'User not found',
+            });
+        };
+        if (password) {
+            throw new Error('password not update');
+        }
 
         if (email) {
             const existingEmail = await User.findOne({ where: { email } });
@@ -138,7 +147,7 @@ exports.updateUser = async (req, res) => {
                 throw new Error('User name already exists');
             };
         };
-        const numberOfAffectedRows = await User.update(
+        await User.update(
             { firstname, lastname, user_name, password, avatar, email, gender, phone, date_of_birth, address, status, roleId },
             {
                 where: { id },
@@ -146,12 +155,6 @@ exports.updateUser = async (req, res) => {
             }
         );
 
-        if (numberOfAffectedRows === 0) {
-            return res.status(404).json({
-                status: 404,
-                message: 'User not found',
-            });
-        }
 
         return res.json({
             status: 200,
