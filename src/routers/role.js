@@ -1,10 +1,11 @@
 import { Router } from 'express';
+import checkToken from './verifyToken';
 
 const roleController = require('../controllers/role.controller');
 const router = Router();
 
-router.post('/create', roleController.createRole);
-router.delete('/delete:id', roleController.deleteRoleById);
-router.patch('/update:id', roleController.updateRole);
-router.get('/get-all', roleController.getAllRoles)
+router.post('/create', checkToken, roleController.createRole);
+router.delete('/delete:id', checkToken, roleController.deleteRoleById);
+router.patch('/update:id', checkToken, roleController.updateRole);
+router.get('/get-all', checkToken, roleController.getAllRoles)
 export default router;

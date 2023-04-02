@@ -2,7 +2,7 @@ const db = require('../models');
 const Joi = require('joi');
 const User = db.user;
 const Role = db.role;
-
+const bcrypt = require('bcrypt');
 
 const userSchema = Joi.object({
     firstname: Joi.string(),
@@ -21,11 +21,10 @@ const userSchema = Joi.object({
 
 exports.getAllUsers = async (req, res) => {
     try {
-
-        const users = User.findAll({
+        const users = await User.findAll({
             include: {
                 model: Role,
-                attributes: ['id']
+                attributes: ['id', 'role_name']
             }
         });
         return res.status(200).json({
@@ -37,20 +36,46 @@ exports.getAllUsers = async (req, res) => {
         console.log(error);
         return res.status(400).json({
             status: 400,
-            message: 'Could not get all users',
+            message: error.message,
         });
     }
 };
 
 exports.getUserById = async (req, res) => {
-    try {
+    const { id } = req.params;
 
-        const user = await User.findByPk(req.params.id);
-        res.render('user/edit', { user });
+    try {
+        const user = await User.findOne({
+            where: { id },
+            include: {
+                model: Role,
+                attributes: ['id', 'role_name']
+            }
+
+        });
+
+        if (!user) {
+            return res.status(404).json({
+                status: 404,
+                message: 'User not found!'
+            });
+        }
+
+        return res.status(200).json({
+            status: 200,
+            data: user,
+            message: 'Get one user successfully',
+        });
+
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            status: 500,
+            message: 'Internal server error'
+        });
     }
 };
+
 
 
 exports.createUser = async (req, res) => {
@@ -71,6 +96,8 @@ exports.createUser = async (req, res) => {
                 message: error.details[0].message
             });
         };
+        const salt = await bcrypt.genSalt(5);
+        value.password = await bcrypt.hash(value.password, salt);
         const user = await User.create(value);
         return res.json({
             data: user,
@@ -110,7 +137,7 @@ exports.updateUser = async (req, res) => {
             };
         };
 
-        const [numberOfAffectedRows, [updatedUser]] = await User.update(
+        const numberOfAffectedRows= await User.update(
             { firstname, lastname, user_name, password, avatar, email, gender, phone, date_of_birth, address, status, roleId },
             {
                 where: { id },
@@ -127,7 +154,6 @@ exports.updateUser = async (req, res) => {
 
         return res.json({
             status: 200,
-            data: updatedUser,
             message: 'User updated successfully',
         });
     } catch (error) {

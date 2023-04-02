@@ -5,8 +5,7 @@ import helmet from 'helmet';
 import fs from 'fs';
 import path from 'path';
 import routes from './routers';
-
-// import { isAuthenticated } from './utils/isAuthenticated';
+import checkToken from './routers/verifyToken';
 
 const app = express();
 
@@ -20,8 +19,12 @@ app.use(morgan('combined', { stream: accessLogStream }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-app.use('/api/user', routes.user);
+//-------------------------Router------------------------------//
+app.use('/api/user', checkToken, routes.user);
 app.use('/api/role', routes.role);
+app.use('/api/auth', routes.auth);
+app.use('/api/degree', checkToken, routes.degree);
+app.use('/api/workplace', checkToken, routes.workplace);
 
 // app.use((req, res) => {
 //   res.status(404).send('404: Page not found');
