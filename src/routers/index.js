@@ -4,6 +4,8 @@ import auth from './auth';
 import degree from './degree';
 import workplace from './workplace';
 import doctor from './doctor';
+import bloodGroup from './bloodGroup';
+import patient from './patient';
 
 export default {
     user,
@@ -12,4 +14,6 @@ export default {
     degree,
     workplace,
     doctor,
+    bloodGroup,
+    patient,
 }

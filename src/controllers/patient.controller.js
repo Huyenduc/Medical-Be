@@ -1,39 +1,33 @@
 const db = require('../models');
-const Doctor = db.doctor;
+const Patient = db.patient;
 const Joi = require('joi');
 const User = db.user;
 const Role = db.role;
-const Workplace = db.workplace;
-const Degree = db.degree;
+const BloodGroup = db.bloodGroup;
 
-const doctorSchemaCreate = Joi.object({
-    specialty: Joi.string().required(),
-    license_number: Joi.string().required(),
-    about: Joi.string(),
-    exp: Joi.number().required(),
-    rating: Joi.number(),
+
+const patientSchemaCreate = Joi.object({
+    weight: Joi.string().required(),
+    health_insurance_number: Joi.string().required(),
+    height: Joi.string(),
     user_id: Joi.string().required(),
-    id_workplace: Joi.string().required(),
-    id_degree: Joi.string().required(),
+    id_blood_groups: Joi.string().required(),
 });
 
-const doctorSchemaupdate = Joi.object({
-    specialty: Joi.string(),
-    license_number: Joi.string(),
-    about: Joi.string(),
-    exp: Joi.number(),
-    rating: Joi.number(),
+const patientSchemaupdate = Joi.object({
+    weight: Joi.string(),
+    health_insurance_number: Joi.string(),
+    height: Joi.string(),
     user_id: Joi.string(),
-    id_workplace: Joi.string(),
-    id_degree: Joi.string(),
+    id_blood_groups: Joi.string(),
 });
 
 
-exports.getAllDoctors = async (req, res) => {
+exports.getAllPatients = async (req, res) => {
     try {
-        const doctors = await Doctor.findAll(
+        const patients = await Patient.findAll(
             {
-                attributes: { exclude: ['user_id', 'id_workplace', 'id_degree', 'roleId'] },
+                attributes: { exclude: ['user_id', 'id_blood_groups'] },
                 include: [
 
                     {
@@ -45,20 +39,16 @@ exports.getAllDoctors = async (req, res) => {
                         attributes: { exclude: ['password', 'createdAt', 'updatedAt', 'roleId'] },
                     },
                     {
-                        model: Workplace,
-                        attributes: ['name', 'type']
+                        model: BloodGroup,
+                        attributes: ['blood_name']
                     },
-                    {
-                        model: Degree,
-                        attributes: ['name', 'abbreviation']
-                    }
                 ]
             }
         );
         return res.status(200).json({
             status: 200,
-            data: doctors,
-            message: 'Get all doctors successfully',
+            data: patients,
+            message: 'Get all patients successfully',
         });
     } catch (error) {
         console.log(error);
@@ -69,11 +59,11 @@ exports.getAllDoctors = async (req, res) => {
     }
 };
 
-exports.createDoctor = async (req, res) => {
+exports.createPatient = async (req, res) => {
 
     try {
 
-        const { error, value } = doctorSchemaCreate.validate(req.body);
+        const { error, value } = patientSchemaCreate.validate(req.body);
         if (error) {
             return res.status(400).json({
                 status: 400,
@@ -81,14 +71,14 @@ exports.createDoctor = async (req, res) => {
             });
         };
 
-        const existinglicenseNumber = await Doctor.findOne({ where: { license_number: req.body.license_number } });
-        if (existinglicenseNumber) {
-            throw new Error('License number already exists');
+        const existinghealth_insurance_number = await Patient.findOne({ where: { health_insurance_number: req.body.health_insurance_number } });
+        if (existinghealth_insurance_number) {
+            throw new Error('Health insurance number already exists');
         };
 
-        const doctor = await Doctor.create(value);
+        const patient = await Patient.create(value);
         return res.json({
-            data: doctor,
+            data: patient,
             status: 200
         });
     }
@@ -101,10 +91,10 @@ exports.createDoctor = async (req, res) => {
     }
 };
 
-exports.updateDoctor = async (req, res) => {
+exports.updatePatient = async (req, res) => {
 
     try {
-        const { error, value } = doctorSchemaupdate.validate(req.body);
+        const { error, value } = patientSchemaupdate.validate(req.body);
         if (error) {
             return res.status(400).json({
                 status: 400,
@@ -112,22 +102,22 @@ exports.updateDoctor = async (req, res) => {
             });
         };
         const { id } = req.params;
-        const idDoctor = await Doctor.findOne({ where: { id: id } });
-        if (!idDoctor) {
+        const idPatient = await Patient.findOne({ where: { id: id } });
+        if (!idPatient) {
             return res.status(404).json({
                 status: 404,
-                message: 'Doctor not found',
+                message: 'Patient not found',
             });
         }
 
         if (req.body.license_number) {
-            const existingLicense_number = await Doctor.findOne({ where: { license_number: req.body.license_number } });
-            if (existingLicense_number && idDoctor.id !== existingEmail.id) {
-                throw new Error('License number already exists');
+            const existingLicense_number = await Patient.findOne({ where: { license_number: req.body.license_number } });
+            if (existingLicense_number && idPatient.id !== existingEmail.id) {
+                throw new Error('Health insurance number already exists');
             };
         };
-        
-        await Doctor.update(
+
+        await Patient.update(
 
             value,
             {
@@ -138,7 +128,7 @@ exports.updateDoctor = async (req, res) => {
 
         return res.json({
             status: 200,
-            message: 'Doctor updated successfully',
+            message: 'Patient updated successfully',
         });
     } catch (error) {
         console.log(error);
@@ -149,22 +139,22 @@ exports.updateDoctor = async (req, res) => {
     }
 };
 
-exports.deleteDoctor = async (req, res) => {
+exports.deletePatient = async (req, res) => {
     try {
         const { id } = req.params;
 
-        const doctor = await Doctor.findOne({ where: { id } });
-        if (!doctor) {
+        const patient = await Patient.findOne({ where: { id } });
+        if (!patient) {
             return res.status(404).json({
                 status: 404,
-                message: 'Doctor not found!'
+                message: 'Patient not found!'
             });
         }
-        await doctor.destroy();
+        await patient.destroy();
 
         return res.json({
             status: 200,
-            message: 'Doctor deleted successfully!'
+            message: 'Patient deleted successfully!'
         });
     } catch (error) {
         console.log(error)
