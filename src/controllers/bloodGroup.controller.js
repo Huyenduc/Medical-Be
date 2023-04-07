@@ -59,7 +59,7 @@ exports.updateBloodGroup = async (req, res) => {
         }
         const idBloodGroup = await BloodGroup.findOne({ where: { id } });
         if (!idBloodGroup) {
-            throw new Error("BloodGroup not found");
+            throw new Error("BloodGroup not found", 404 );
         };
         if (blood_name) {
             const existingName = await BloodGroup.findOne({ where: { blood_name } });

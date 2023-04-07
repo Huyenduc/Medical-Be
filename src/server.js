@@ -6,6 +6,7 @@ import fs from 'fs';
 import path from 'path';
 import routes from './routers';
 import checkToken from './routers/verifyToken';
+const cors = require('cors');
 
 const app = express();
 
@@ -18,6 +19,7 @@ app.use(helmet());
 app.use(morgan('combined', { stream: accessLogStream }));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(cors());
 
 //-------------------------Router------------------------------//
 app.use('/api/user', checkToken, routes.user);
