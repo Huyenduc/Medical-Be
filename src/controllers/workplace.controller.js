@@ -15,7 +15,6 @@ exports.getAllWorkplace = async (req, res) => {
     try {
         const workplaces = await Workplace.findAll();
         return res.status(200).json({
-            status: 200,
             data: workplaces,
         });
     } catch (error) {
@@ -72,7 +71,7 @@ exports.updateWorkplace = async (req, res) => {
             }
         };
 
-        await Workplace.update(
+        const data = await Workplace.update(
             { name, phone, email, address, city, type },
             {
                 where: { id },
@@ -81,6 +80,7 @@ exports.updateWorkplace = async (req, res) => {
         );
 
         return res.json({
+            data: data,
             status: 200,
             message: 'Workplace updated successfully',
         });
@@ -106,6 +106,7 @@ exports.deleteWorkplace = async (req, res) => {
         }
         await workplace.destroy();
         return res.json({
+            id: id,
             status: 200,
             message: 'Workplace deleted successfully!'
         });
