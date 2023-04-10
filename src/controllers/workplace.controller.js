@@ -26,6 +26,22 @@ exports.getAllWorkplace = async (req, res) => {
     }
 };
 
+exports.getOneWorkplace = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const workplace = await Workplace.findOne({ where: { id } });
+        return res.status(200).json({
+            data: workplace,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: 400,
+            message: error.message,
+        });
+    }
+}
+
 exports.createWorkplace = async (req, res) => {
     const { name } = req.body
     try {
@@ -41,7 +57,8 @@ exports.createWorkplace = async (req, res) => {
         const workplace = await Workplace.create(value);
         return res.json({
             data: workplace,
-            status: 200
+            status: 200,
+            message: 'Workplace create  successfully',
         });
     } catch (error) {
         console.log(error);
@@ -79,8 +96,10 @@ exports.updateWorkplace = async (req, res) => {
             }
         );
 
+        // console.log(data[1])
+
         return res.json({
-            data: data,
+            data: data[1][0].dataValues,
             status: 200,
             message: 'Workplace updated successfully',
         });
