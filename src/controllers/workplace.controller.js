@@ -103,7 +103,7 @@ exports.updateWorkplace = async (req, res) => {
             status: 200,
             message: 'Workplace updated successfully',
         });
-
+        
     } catch (error) {
         console.log(error);
         return res.status(400).json({
