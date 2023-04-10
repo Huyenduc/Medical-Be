@@ -1,8 +1,23 @@
 const db = require('../models');
 const Joi = require('joi');
+const multer = require('multer');
+const path = require('path');
+
 const User = db.user;
 const Role = db.role;
 const bcrypt = require('bcrypt');
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, `${Date.now()}${path.extname(file.originalname)}`);
+    }
+});
+
+// Create multer object for handling file upload
+export const upload = multer({ storage });
 
 const userSchema = Joi.object({
     firstname: Joi.string(),
@@ -15,7 +30,7 @@ const userSchema = Joi.object({
     phone: Joi.string(),
     date_of_birth: Joi.date(),
     address: Joi.string(),
-    status: Joi.string().valid('Active', 'Inactive'),
+    status: Joi.boolean(),
     roleId: Joi.string().required()
 });
 
