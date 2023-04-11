@@ -25,7 +25,7 @@ const userSchema = Joi.object({
     lastname: Joi.string(),
     user_name: Joi.string().required(),
     password: Joi.string().min(6).required(),
-    avatar: Joi.string(),
+    // avatar: Joi.string(),
     email: Joi.string().email(),
     gender: Joi.string().valid('Male', 'Female', 'Other'),
     phone: Joi.string(),
@@ -96,12 +96,11 @@ exports.getUserById = async (req, res) => {
 
 
 exports.createUser = async (req, res) => {
-    console.log(req.file)
-  
+    // const { roleId } = req.roleId;
     try {
         const { error, value } = userSchema.validate(req.body);
         if (error) {
-            fs.unlinkSync(req.file.path);
+            req.file && fs.unlinkSync(req.file.path);
             return res.status(400).json({
                 status: 400,
                 message: error.details[0].message
@@ -116,18 +115,36 @@ exports.createUser = async (req, res) => {
         if (existingUserName) {
             throw new Error('User_Name already exists');
         };
+        const avatar_path = req.file ? req.file.filename : null;
 
         const salt = await bcrypt.genSalt(5);
         value.password = await bcrypt.hash(value.password, salt);
-        const user = await User.create(value);
+        const user = await User.create({ ...value, avatar_path });
+        const role = await Role.findOne({ where: { id: user.roleId } });
+        // console.log(role)
         return res.json({
-            data: user,
-            status: 200
+            data: {
+                id: user.id,
+                firstname: user.firstname,
+                lastname: user.firstname,
+                user_name: user.user_name,
+                email: user.email,
+                phone: user.phone,
+                date_of_birth: user.date_of_birth,
+                address: user.address,
+                status: user.status,
+                roleId: user.roleId,
+                avatar_path: user.avatar_path,
+                gender: user.gender,
+                role: role,
+            },
+            status: 200,
+            message: 'Create user successfully',
         });
     }
     catch (error) {
         console.log(error);
-        fs.unlinkSync(req.file.path);
+        req.file && fs.unlinkSync(req.file.path);
         return res.status(400).json({
             status: 400,
             message: error.message
@@ -203,6 +220,7 @@ exports.deleteUser = async (req, res) => {
         await user.destroy();
 
         return res.json({
+            id: id,
             status: 200,
             message: 'User deleted successfully!'
         });

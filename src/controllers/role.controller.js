@@ -27,6 +27,22 @@ exports.getAllRoles = async (req, res) => {
     }
 };
 
+exports.getOneRole = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const role = await Role.findOne({ where: { id } });
+        return res.status(200).json({
+            data: role,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: 400,
+            message: error.message,
+        });
+    }
+}
+
 
 exports.createRole = async (req, res) => {
     console.log(req.body)
@@ -53,7 +69,8 @@ exports.createRole = async (req, res) => {
                 role_name: role.role_name,
                 id: role.id
             },
-            status: 200
+            status: 200,
+            message: 'Role create  successfully',
         });
     } catch (error) {
         console.log(error)
@@ -80,6 +97,7 @@ exports.deleteRoleById = async (req, res) => {
 
         return res.json({
             status: 200,
+            id:id,
             message: 'Role deleted successfully!'
         });
     } catch (error) {

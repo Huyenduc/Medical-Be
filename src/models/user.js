@@ -27,10 +27,10 @@ module.exports = (sequelize) => {
       allowNull: false,
       type: Sequelize.STRING,
     },
-    avatar: {
+    avatar_path: {
       allowNull: true,
-      type: Sequelize.BLOB
-    },
+      type: Sequelize.STRING,
+    },  
     email: {
       allowNull: false,
       type: Sequelize.STRING,
