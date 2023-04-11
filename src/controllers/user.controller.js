@@ -1,5 +1,6 @@
 const db = require('../models');
 const Joi = require('joi');
+const fs = require('fs')
 const multer = require('multer');
 const path = require('path');
 
@@ -9,7 +10,7 @@ const bcrypt = require('bcrypt');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/');
+        cb(null, 'src/uploads/');
     },
     filename: function (req, file, cb) {
         cb(null, `${Date.now()}${path.extname(file.originalname)}`);
@@ -95,9 +96,12 @@ exports.getUserById = async (req, res) => {
 
 
 exports.createUser = async (req, res) => {
+    console.log(req.file)
+  
     try {
         const { error, value } = userSchema.validate(req.body);
         if (error) {
+            fs.unlinkSync(req.file.path);
             return res.status(400).json({
                 status: 400,
                 message: error.details[0].message
@@ -123,6 +127,7 @@ exports.createUser = async (req, res) => {
     }
     catch (error) {
         console.log(error);
+        fs.unlinkSync(req.file.path);
         return res.status(400).json({
             status: 400,
             message: error.message

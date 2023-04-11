@@ -1,5 +1,5 @@
 const db = require('../models');
-const Joi = require('joi');
+const path = require('path');
 const User = db.user;
 const bcrypt = require('bcrypt');
 const Role = db.role;
@@ -49,6 +49,20 @@ exports.login = async (req, res) => {
             token
         });
 
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: 400,
+            message: error.message,
+        });
+    }
+};
+
+exports.getAvatar = async (req, res) => {
+    try {
+        const { imageName } = req.params;
+        const filePath = path.join(__dirname, '../uploads', imageName);
+        res.sendFile(filePath);
     } catch (error) {
         console.log(error);
         return res.status(400).json({
