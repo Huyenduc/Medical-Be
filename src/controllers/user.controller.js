@@ -184,7 +184,7 @@ exports.updateUser = async (req, res) => {
                 throw new Error('User name already exists');
             };
         };
-        await User.update(
+        const user = await User.update(
             { firstname, lastname, user_name, password, avatar, email, gender, phone, date_of_birth, address, status, roleId },
             {
                 where: { id },
@@ -192,9 +192,25 @@ exports.updateUser = async (req, res) => {
             }
         );
 
+        const role = await Role.findOne({ where: { id: user[1][0].dataValues.roleId } });
 
         return res.json({
             status: 200,
+            data: {
+                id: user[1][0].dataValues.id,
+                firstname: user[1][0].dataValues.firstname,
+                lastname: user[1][0].dataValues.lastname,
+                user_name: user[1][0].dataValues.user_name,
+                email: user[1][0].dataValues.email,
+                phone: user[1][0].dataValues.phone,
+                date_of_birth: user[1][0].dataValues.date_of_birth,
+                address: user[1][0].dataValues.address,
+                status: user[1][0].dataValues.status,
+                roleId: user[1][0].dataValues.roleId,
+                avatar_path: user[1][0].dataValues.avatar_path,
+                gender: user[1][0].dataValues.gender,
+                role: role,
+            },
             message: 'User updated successfully',
         });
     } catch (error) {

@@ -72,4 +72,12 @@ exports.getAvatar = async (req, res) => {
     }
 }
 
+exports.uploadAvatar = async (req, res) => {
+    try {
+
+    } catch (error) {
+        
+    }
+}
+
 

@@ -23,6 +23,22 @@ exports.getAllDegrees = async (req, res) => {
     }
 };
 
+exports.getOneDegree = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const degree = await Degree.findOne({ where: { id } });
+        return res.status(200).json({
+            data: degree,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: 400,
+            message: error.message,
+        });
+    }
+}
+
 exports.createDegree = async (req, res) => {
     const { name } = req.body
     try {
@@ -39,13 +55,15 @@ exports.createDegree = async (req, res) => {
         const degree = await Degree.create(value);
         return res.json({
             data: degree,
-            status: 200
+            status: 200,
+            message: "Degree create successfully!"
         });
     } catch (error) {
         console.log(error);
         return res.status(400).json({
             status: 400,
             message: error.message,
+
         });
     }
 };
@@ -69,7 +87,7 @@ exports.updateDegree = async (req, res) => {
             }
         };
 
-        await Degree.update(
+        const degree = await Degree.update(
             { name, abbreviation },
             {
                 where: { id },
@@ -77,6 +95,7 @@ exports.updateDegree = async (req, res) => {
             }
         );
         return res.json({
+            data: degree[1][0].dataValues,
             status: 200,
             message: 'Degree updated successfully',
         });
@@ -102,6 +121,7 @@ exports.deleteDegree = async (req, res) => {
         }
         await degree.destroy();
         return res.json({
+            id: id,
             status: 200,
             message: 'Degree deleted successfully!'
         });

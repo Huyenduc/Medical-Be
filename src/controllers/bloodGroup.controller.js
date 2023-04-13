@@ -22,6 +22,22 @@ exports.getAllBloodGroups = async (req, res) => {
     }
 };
 
+exports.getOneBloodGroup = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const bloodGroup = await BloodGroup.findOne({ where: { id } });
+        return res.status(200).json({
+            data: bloodGroup,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({
+            status: 400,
+            message: error.message,
+        });
+    }
+}
+
 exports.createBloodGroup = async (req, res) => {
     const { blood_name } = req.body
     try {
@@ -38,7 +54,8 @@ exports.createBloodGroup = async (req, res) => {
         const degree = await BloodGroup.create(value);
         return res.json({
             data: degree,
-            status: 200
+            status: 200,
+            message: "BloodGroup deleted successfully!",
         });
     } catch (error) {
         console.log(error);
@@ -59,7 +76,7 @@ exports.updateBloodGroup = async (req, res) => {
         }
         const idBloodGroup = await BloodGroup.findOne({ where: { id } });
         if (!idBloodGroup) {
-            throw new Error("BloodGroup not found", 404 );
+            throw new Error("BloodGroup not found", 404);
         };
         if (blood_name) {
             const existingName = await BloodGroup.findOne({ where: { blood_name } });
@@ -68,7 +85,7 @@ exports.updateBloodGroup = async (req, res) => {
             }
         };
 
-        await BloodGroup.update(
+        const bloodGroup = await BloodGroup.update(
             { blood_name },
             {
                 where: { id },
@@ -77,6 +94,7 @@ exports.updateBloodGroup = async (req, res) => {
         );
         return res.json({
             status: 200,
+            data: bloodGroup[1][0].dataValues,
             message: 'BloodGroup updated successfully',
         });
 
@@ -101,6 +119,7 @@ exports.deleteBloodGroup = async (req, res) => {
         }
         await degree.destroy();
         return res.json({
+            id: id,
             status: 200,
             message: 'BloodGroup deleted successfully!'
         });
