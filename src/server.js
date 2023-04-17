@@ -13,7 +13,7 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 io.on('connection', socket => {
-  console.log("Someone connected");
+  console.log("Someone connected",socket);
   });
 
 const accessLogStream = fs.createWriteStream(
