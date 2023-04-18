@@ -30,7 +30,7 @@ module.exports = (sequelize) => {
     avatar_path: {
       allowNull: true,
       type: Sequelize.STRING,
-    },  
+    },
     email: {
       allowNull: false,
       type: Sequelize.STRING,
@@ -78,8 +78,14 @@ module.exports = (sequelize) => {
 
   });
 
-  User.associate = function(models) {
+  User.associate = function (models) {
     User.belongsTo(models.role, { foreignKey: 'roleId' });
+    User.hasOne(models.doctor, {
+      foreignKey: {
+        name: 'user_id',
+        type: DataTypes.UUID
+      }
+    });
   };
 
   return User;

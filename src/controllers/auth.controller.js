@@ -14,11 +14,7 @@ exports.login = async (req, res) => {
         }
 
         const user = await User.findOne({
-            where: { user_name },
-            include: {
-                model: Role,
-                attributes: ['id', 'role_name']
-            }
+            where: { user_name }
         });
 
         if (!user) {
@@ -37,15 +33,6 @@ exports.login = async (req, res) => {
         res.json({
             message: "Login Successful!",
             status: 200,
-            data: {
-                id: user.id,
-                user_name: user.user_name,
-                firstname: user.firstname,
-                lastname: user.lastname,
-                email: user.email,
-                role: user.role.role_name,
-                status: user.status
-            },
             token
         });
 

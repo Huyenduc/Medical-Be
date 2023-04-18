@@ -15,7 +15,6 @@ module.exports = {
       },
       health_insurance_number: {
         unique: true,
-        allowNull: false,
         type: Sequelize.STRING
       },
       height: {
@@ -33,7 +32,6 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       id_blood_groups: {
-        allowNull: false,
         type: Sequelize.UUID,
         references: {
           model: 'bloodGroups',

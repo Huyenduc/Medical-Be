@@ -6,6 +6,8 @@ const path = require('path');
 
 const User = db.user;
 const Role = db.role;
+const Doctor = db.doctor;
+const Patient = db.patient;
 const bcrypt = require('bcrypt');
 
 const storage = multer.diskStorage({
@@ -96,7 +98,7 @@ exports.getUserById = async (req, res) => {
 
 
 exports.createUser = async (req, res) => {
-    // const { roleId } = req.roleId;
+    const { roleId } = req.body;
     try {
         const { error, value } = userSchema.validate(req.body);
         if (error) {
@@ -107,6 +109,8 @@ exports.createUser = async (req, res) => {
             });
         };
         const existingUser = await User.findOne({ where: { email: req.body.email } });
+        const role_name = await Role.findOne({ where: { id: roleId } });
+        console.log(role_name.dataValues)
         const existingUserName = await User.findOne({ where: { user_name: req.body.user_name } });
         if (existingUser) {
             throw new Error('Email already exists');
@@ -120,13 +124,20 @@ exports.createUser = async (req, res) => {
         const salt = await bcrypt.genSalt(5);
         value.password = await bcrypt.hash(value.password, salt);
         const user = await User.create({ ...value, avatar_path });
+        if (user) {
+            if (role_name.dataValues.role_name === 'Doctor') {
+                await Doctor.create({ user_id: user.id });
+            } else if (role_name.dataValues.role_name === 'Patient') {
+                await Patient.create({ user_id: user.id });
+            }
+        }
         const role = await Role.findOne({ where: { id: user.roleId } });
         // console.log(role)
         return res.json({
             data: {
                 id: user.id,
                 firstname: user.firstname,
-                lastname: user.firstname,
+                lastname: user.lastname,
                 user_name: user.user_name,
                 email: user.email,
                 phone: user.phone,

@@ -13,7 +13,7 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 io.on('connection', socket => {
-  console.log("Someone connected",socket);
+  console.log("Someone connected");
   });
 
 const accessLogStream = fs.createWriteStream(
@@ -45,6 +45,6 @@ app.use('/api/patient',checkToken,routes.patient)
 //   res.status(404).send('404: Page not found');
 // });
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Example app listening on port ${process.env.PORT}!`);
 });

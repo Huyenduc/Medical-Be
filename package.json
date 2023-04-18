@@ -26,10 +26,9 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "ngrok": "^3.2.7",
-    "nodemon": "^2.0.3",
     "pg": "^8.10.0",
     "pg-hstore": "^2.3.4",
-    "socket.io": "^4.6.1",
+    "socket.io": "^4.5.3",
     "twilio": "^3.43.0"
   },
   "devDependencies": {

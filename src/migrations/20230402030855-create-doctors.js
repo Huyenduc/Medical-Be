@@ -11,19 +11,16 @@ module.exports = {
         type: Sequelize.UUID
       },
       specialty: {
-        allowNull: false,
         type: Sequelize.STRING,
       },
       license_number: {
         unique: true,
-        allowNull: false,
         type: Sequelize.STRING            
       },
       about: {
         type: Sequelize.STRING
       },
       exp: {
-        allowNull: false,
         type: Sequelize.INTEGER            
       },
       rating: {
@@ -41,7 +38,6 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       id_workplace: {
-        allowNull: false,
         type: Sequelize.UUID,
         references: {
           model: 'workplaces',
@@ -51,7 +47,6 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       id_degree: {
-        allowNull: false,
         type: Sequelize.UUID,
         references: {
           model: 'degrees',
