@@ -6,23 +6,29 @@ import fs from 'fs';
 import path from 'path';
 import routes from './routers';
 import checkToken from './routers/verifyToken';
+import { notification, createRoom } from './controllers/createRoom.controller';
+// import './socket'
 const cors = require('cors');
 
 const app = express();
 const server = require('http').Server(app);
-const io = require('socket.io')(server);
-
-io.on('connection', socket => {
-  console.log("Someone connected");
-  });
-
+export const io = require('socket.io')(server);
+global.io = io;
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, '../access.log'),
   { flags: 'a' }
 );
-app.get('/', (req, res) => {
-  res.send("Hello---- world!");
-});
+io.on('connection', socket => {
+  socket.on('call-video', (data) => {
+    notification();
+  });
+
+  socket.on('create-room', (data) => {
+    console.log(data)
+    createRoom(data);
+  });
+
+})
 
 app.use(helmet());
 app.use(morgan('combined', { stream: accessLogStream }));
@@ -36,9 +42,11 @@ app.use('/api/role', routes.role);
 app.use('/api/auth', routes.auth);
 app.use('/api/degree', checkToken, routes.degree);
 app.use('/api/workplace', checkToken, routes.workplace);
-app.use('/api/doctor',checkToken,routes.doctor);
-app.use('/api/bloodGroup',checkToken,routes.bloodGroup);
-app.use('/api/patient',checkToken,routes.patient)
+app.use('/api/doctor', checkToken, routes.doctor);
+app.use('/api/bloodGroup', checkToken, routes.bloodGroup);
+app.use('/api/patient', checkToken, routes.patient);
+app.use('/api/room', checkToken, routes.createRoom);
+
 
 
 // app.use((req, res) => {

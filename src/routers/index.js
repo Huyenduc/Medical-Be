@@ -6,6 +6,7 @@ import workplace from './workplace';
 import doctor from './doctor';
 import bloodGroup from './bloodGroup';
 import patient from './patient';
+import createRoom from './createRoom'
 
 export default {
     user,
@@ -16,4 +17,5 @@ export default {
     doctor,
     bloodGroup,
     patient,
+    createRoom
 }
